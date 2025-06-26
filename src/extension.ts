@@ -7,20 +7,8 @@ import { GitExtension } from './git';
 // Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "fine-push-pr-tool" is now active!');
-
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	const disposable = vscode.commands.registerCommand('fine-push-pr-tool.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from fine-push-pr-tool!');
-	});
-
-	context.subscriptions.push(disposable);
+	const output = vscode.window.createOutputChannel('Fine Push PR Tool');
+	output.appendLine('Activated');
 
 	const gitExtension = vscode.extensions.getExtension('vscode.git')?.exports as GitExtension;
 	if (!gitExtension) {
@@ -47,6 +35,7 @@ export function activate(context: vscode.ExtensionContext) {
 			return;
 		}
 		const prUrl = `https://code.fineres.com/users/${userName}/repos/${repoName}/pull-requests?create&sourceBranch=refs/heads/${branch}`;
+		output.appendLine(`Code has been pushed to ${branch} branch of ${repoName} repository, PR URL: ${prUrl}`);
 		vscode.window.showInformationMessage(`Code has been pushed to ${branch} branch of ${repoName} repository`, "Create PR", "Copy Link").then(action => {
 			if (action === "Create PR") {
 				vscode.env.openExternal(vscode.Uri.parse(prUrl));
